@@ -5,10 +5,10 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.UuidGenerator;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
 @Data
 @AllArgsConstructor
@@ -21,8 +21,6 @@ import java.util.Set;
 @Builder
 public class User {
     @Id
-    @GeneratedValue
-    @UuidGenerator
     private String id;
 
     @Column(nullable = false)
@@ -49,4 +47,11 @@ public class User {
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     @Builder.Default
     private Set<Role> roles = new HashSet<>();
+
+    @PrePersist
+    void assignId() {
+        if (id == null) {
+            id = UUID.randomUUID().toString();
+        }
+    }
 }

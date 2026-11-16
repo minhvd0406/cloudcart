@@ -70,7 +70,7 @@ function OrderList({ orders }) {
                                                             <img src={`${item.imageUrl}`} />
                                                             <div>
                                                                 <div>{item.productName}</div>
-                                                                <div>Rs. {item.price} x {item.quantity}</div>
+                                                                <div>USD {parseFloat(item.price).toFixed(2)} x {item.quantity}</div>
                                                             </div>
                                                         </div>
                                                     )
@@ -78,7 +78,7 @@ function OrderList({ orders }) {
                                             }
                                         </div>
                                         <div>
-                                            <div>Total: Rs. {order.orderAmt}</div>
+                                            <div>Total: USD {parseFloat(order.orderAmt).toFixed(2)}</div>
                                             <div>Order Status: {order.orderStatus}</div>
                                             <div>Paid Status: {order.paymentStatus}</div>
                                             <div>Shipped address: {order.addressLine1} {order.addressLine2}</div>

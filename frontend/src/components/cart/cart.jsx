@@ -54,7 +54,7 @@ function Cart({ isCartOpen, onClose }) {
 
                                             </h4>
                                             <span className="product-price">
-                                                {cartItem.price} x {cartItem.quantity} = Rs.  {parseFloat(cartItem.amount).toFixed(2)}
+                                                USD {parseFloat(cartItem.price).toFixed(2)} x {cartItem.quantity} = USD {parseFloat(cartItem.amount).toFixed(2)}
                                             </span>
                                             <div className="quantity-control">
                                                 <span
@@ -80,7 +80,7 @@ function Cart({ isCartOpen, onClose }) {
                             
                                 {cart.cartItems && (
                                     <div className="cart-summary">
-                                        <h3>Subtotal: Rs. {parseFloat(cart.subtotal).toFixed(2)}</h3>
+                                        <h3>Subtotal: USD {parseFloat(cart.subtotal).toFixed(2)}</h3>
                                         <button className="btn checkout-btn" onClick={onCheckout}>Proceed to checkout</button>
                                         </div>
                                 )}

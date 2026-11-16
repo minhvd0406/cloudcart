@@ -43,7 +43,7 @@ function Login() {
                                 placeholder="john@gmail.com"
                                 {...register('email', {
                                     required: "Email is required!",
-                                    pattern: { value: /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g, message: "Invalid email address!" }
+                                    pattern: { value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, message: "Invalid email address!" }
                                 })}
                             />
                         </label>

@@ -134,14 +134,14 @@ const CheckoutForm = () => {
                                         {cartItem.productName}
                                     </h4>
                                     <span className="product-price">
-                                        {cartItem.price} x {cartItem.quantity} = Rs.  {parseFloat(cartItem.amount).toFixed(2)}
+                                        USD {parseFloat(cartItem.price).toFixed(2)} x {cartItem.quantity} = USD {parseFloat(cartItem.amount).toFixed(2)}
                                     </span>
                                 </div>
 
                             </div>
                         ))}
                         <hr />
-                        <h3><span>Sub Total</span><span>Rs. {parseFloat(cart?.subtotal).toFixed(2)}</span></h3><br />
+                        <h3><span>Sub Total</span><span>USD {parseFloat(cart?.subtotal).toFixed(2)}</span></h3><br />
                         <small>Delivary charges will be added to above total at you door step by our staffs when we deliver your order.</small>
                         <br />
                         <Link to="/"><button>Edit cart</button></Link>

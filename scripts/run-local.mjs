@@ -86,6 +86,11 @@ function localEnvironment() {
     CLOUDCART_NOTIFICATION_MODE: 'outbox',
     CLOUDCART_JWT_SECRET: readFileSync(jwtSecretFile, 'utf8').trim(),
     CLOUDCART_INTERNAL_TOKEN: readFileSync(internalTokenFile, 'utf8').trim(),
+    CLOUDCART_SEED_ENABLED: 'true',
+    CLOUDCART_SEED_USER_ID: '00000000-0000-0000-0000-000000000001',
+    CLOUDCART_SEED_USERNAME: 'cloudcart-user',
+    CLOUDCART_SEED_EMAIL: 'user@cloudcart.local',
+    CLOUDCART_SEED_USER_PASSWORD: 'CloudCart123!',
     VITE_API_BASE_URL: 'http://localhost:8080/api',
   };
 }
@@ -170,6 +175,23 @@ async function waitForPort(name, port, timeoutMs = 120_000) {
   throw new Error(`${name} did not become ready on port ${port} within ${timeoutMs / 1000}s.`);
 }
 
+async function waitForHttp(name, url, timeoutMs = 120_000) {
+  const deadline = Date.now() + timeoutMs;
+  while (Date.now() < deadline) {
+    try {
+      const response = await fetch(url);
+      if (response.ok) {
+        console.log(`[ready] ${name.padEnd(22)} ${url}`);
+        return;
+      }
+    } catch {
+      // The gateway or its discovery route is not ready yet.
+    }
+    await new Promise((resolve) => setTimeout(resolve, 500));
+  }
+  throw new Error(`${name} did not become ready within ${timeoutMs / 1000}s.`);
+}
+
 async function assignAvailableServicePorts() {
   const reservedPorts = new Set(applications.map(({ port }) => port));
   for (const application of applications.slice(1, -1)) {
@@ -236,7 +258,10 @@ async function main() {
   const environment = localEnvironment();
   await assertPublicPortsAvailable();
   await assignAvailableServicePorts();
-  buildProject(environment);
+  buildProject({
+    ...environment,
+    CLOUDCART_SEED_ENABLED: 'false',
+  });
 
   const registry = applications[0];
   console.log('\n[start] Starting service registry...');
@@ -254,6 +279,10 @@ async function main() {
   console.log('\n[start] Starting API gateway...');
   startApplication(gateway, environment);
   await waitForPort(gateway.name, gateway.port);
+  await waitForHttp(
+    'gateway routing',
+    `http://127.0.0.1:${gateway.port}/api/category-service/category/get/all`,
+  );
 
   console.log('\n[start] Starting React frontend...');
   startProcess('frontend', command('npm'), ['run', 'dev', '--', '--host', '0.0.0.0'], frontendDirectory, environment);

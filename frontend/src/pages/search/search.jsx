@@ -63,7 +63,7 @@ function ProductsWrapper({ products }) {
                             return (
                                 <div className='box' key={product.id}>
                                     <img src={`${product.imageUrl}`} className="image" alt='product'></img>
-                                    <div className='price' aria-label='image'>Rs. {product.price}</div>
+                                    <div className='price' aria-label='image'>USD {parseFloat(product.price).toFixed(2)}</div>
                                     <div className='text-part'>
                                         <div className='name'>{product.productName}</div>
                                         <div className='description'>{product.description}</div>

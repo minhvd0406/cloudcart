@@ -132,13 +132,13 @@ public class OrderServiceImpl implements OrderService {
                 + "<p>Your order #" + order.getId() + " has been successfully placed!</p>"
                 + "<h3>Order summary</h3>");
         for (OrderItem item : order.getOrderItems()) {
-            String description = item.getProductName() + ": " + item.getQuantity() + " x " + item.getPrice() + "<br>";
+            String description = item.getProductName() + ": " + item.getQuantity() + " x USD " + item.getPrice() + "<br>";
             contentBuilder.append(description);
         }
 
         String content = contentBuilder.toString();
 
-        content += "<h4>Total: " + order.getOrderAmt() + "</h4>"
+        content += "<h4>Total: USD " + order.getOrderAmt() + "</h4>"
                 + "<p>Delivery charges be will added to your total at your doorstep!</p>"
                 + "<br>Thank you,<br>"
                 + "CloudCart.";
