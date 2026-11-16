@@ -1,0 +1,118 @@
+package com.cloudcart.categoryservice.services;
+
+import com.cloudcart.categoryservice.dtos.ApiResponseDto;
+import com.cloudcart.categoryservice.dtos.CategoryRequestDto;
+import com.cloudcart.categoryservice.exceptions.CategoryAlreadyExistsException;
+import com.cloudcart.categoryservice.exceptions.CategoryNotFoundException;
+import com.cloudcart.categoryservice.exceptions.ServiceLogicException;
+import com.cloudcart.categoryservice.modals.Category;
+import com.cloudcart.categoryservice.repositories.CategoryRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Component;
+
+import java.util.List;
+
+@Component
+@RequiredArgsConstructor
+public class CategoryServiceImpl implements CategoryService {
+
+    private final CategoryRepository categoryRepository;
+
+    @Override
+    public ResponseEntity<ApiResponseDto<?>> getAllCategories() throws ServiceLogicException {
+        List<Category> categories = categoryRepository.findAll();
+        try {
+            return ResponseEntity.ok(
+                    ApiResponseDto.builder()
+                            .isSuccess(true)
+                            .response(categories)
+                            .message(categories.size() + " results found!")
+                            .build()
+            );
+        }catch (Exception e) {
+            throw new ServiceLogicException("Unable to find categories!");
+        }
+    }
+
+    @Override
+    public ResponseEntity<ApiResponseDto<?>> getCategoryById(String categoryId) throws ServiceLogicException {
+        try {
+            Category category = categoryRepository.findById(categoryId).orElse(null);
+            return ResponseEntity.ok(
+                    ApiResponseDto.builder()
+                            .isSuccess(true)
+                            .response(category)
+                            .build()
+            );
+        }catch (Exception e) {
+            throw new ServiceLogicException("Unable to find category!");
+        }
+    }
+
+    @Override
+    public ResponseEntity<ApiResponseDto<?>> createCategory(CategoryRequestDto categoryRequestDto) throws ServiceLogicException, CategoryAlreadyExistsException {
+        try {
+            if (!categoryRepository.existsByCategoryName(categoryRequestDto.getName())) {
+                Category category = Category.builder()
+                        .categoryName(categoryRequestDto.getName())
+                        .description(categoryRequestDto.getDescription())
+                        .imageUrl(categoryRequestDto.getImageUrl())
+                        .build();
+                categoryRepository.save(category);
+                return ResponseEntity.ok(
+                        ApiResponseDto.builder()
+                                .isSuccess(true)
+                                .message("Category saved successfully!")
+                                .build()
+                );
+            }
+
+        }catch (Exception e) {
+            throw new ServiceLogicException("Unable save category!");
+        }
+        throw new CategoryAlreadyExistsException("Category already exists with name " + categoryRequestDto.getName());
+    }
+
+    @Override
+    public ResponseEntity<ApiResponseDto<?>> editCategory(String categoryId, CategoryRequestDto categoryRequestDto) throws ServiceLogicException, CategoryAlreadyExistsException {
+        try {
+            Category category = categoryRepository.findById(categoryId).orElse(null);
+            if (category != null) {
+                category.setCategoryName(categoryRequestDto.getName());
+                category.setDescription(categoryRequestDto.getDescription());
+                category.setImageUrl(categoryRequestDto.getImageUrl());
+                categoryRepository.save(category);
+                return ResponseEntity.ok(
+                        ApiResponseDto.builder()
+                                .isSuccess(true)
+                                .message("Category edited successfully!")
+                                .build()
+                );
+            }
+
+        }catch (Exception e) {
+            throw new ServiceLogicException("Unable edit category!");
+        }
+        throw new CategoryNotFoundException("No category found with id " + categoryId);
+    }
+
+    @Override
+    public ResponseEntity<ApiResponseDto<?>> deleteCategory(String categoryId) throws ServiceLogicException {
+        try {
+            if (categoryRepository.existsById(categoryId)) {
+                categoryRepository.deleteById(categoryId);
+                return ResponseEntity.ok(
+                        ApiResponseDto.builder()
+                                .isSuccess(true)
+                                .message("Category deleted successfully!")
+                                .build()
+                );
+            }
+
+        }catch (Exception e) {
+            throw new ServiceLogicException("Unable delete category!");
+        }
+        throw new CategoryNotFoundException("No category with id " + categoryId);
+    }
+}

@@ -1,0 +1,28 @@
+spring:
+  application:
+    name: category-service
+  datasource:
+    url: "jdbc:h2:file:${CLOUDCART_DATA_DIR:../../.runtime/data}/category-service;AUTO_SERVER=TRUE"
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+  jpa:
+    hibernate:
+      ddl-auto: update
+    open-in-view: false
+    defer-datasource-initialization: true
+  sql:
+    init:
+      mode: always
+
+server:
+  port: 9000
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
+    fetchRegistry: true
+    registerWithEureka: true
+  instance:
+    hostname: localhost

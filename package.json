@@ -1,0 +1,9 @@
+{
+  "name": "cloudcart",
+  "private": true,
+  "version": "1.0.0",
+  "description": "CloudCart local development launcher",
+  "scripts": {
+    "local": "node scripts/run-local.mjs"
+  }
+}
